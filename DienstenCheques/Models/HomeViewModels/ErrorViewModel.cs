@@ -1,6 +1,6 @@
 using System;
 
-namespace DienstenCheques.Models
+namespace DienstenCheques.Models.HomeViewModels
 {
     public class ErrorViewModel
     {

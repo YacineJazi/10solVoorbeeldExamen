@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -9,8 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using DienstenCheques.Models;
+using DienstenCheques.Models.Domain;
 using DienstenCheques.Models.ManageViewModels;
 using DienstenCheques.Services;
 
@@ -480,7 +478,7 @@ namespace DienstenCheques.Controllers
             int currentPosition = 0;
             while (currentPosition + 4 < unformattedKey.Length)
             {
-                result.Append(unformattedKey.Substring(currentPosition, 4)).Append(" ");
+                result.Append(unformattedKey, currentPosition, 4).Append(" ");
                 currentPosition += 4;
             }
             if (currentPosition < unformattedKey.Length)

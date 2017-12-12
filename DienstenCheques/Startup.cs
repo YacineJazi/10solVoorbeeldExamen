@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DienstenCheques.Data;
-using DienstenCheques.Models;
 using DienstenCheques.Services;
+using DienstenCheques.Models.Domain;
+using DienstenCheques.Filters;
+using System.Security.Claims;
 
 namespace DienstenCheques
 {
@@ -33,14 +31,21 @@ namespace DienstenCheques
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthorization(options =>
+            options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, "Customer")));
+
+            services.AddScoped<GebruikerFilter>();
+            services.AddTransient<DienstenChequesInitializer>();
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+            services.AddSession();
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DienstenChequesInitializer dienstenChequesInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -54,7 +59,7 @@ namespace DienstenCheques
             }
 
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -63,6 +68,8 @@ namespace DienstenCheques
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            dienstenChequesInitializer.InitializeData().Wait();
         }
     }
 }

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using DienstenCheques.Models;
+using DienstenCheques.Models.Domain;
+using Beerhall.Data.Mappers;
 
 namespace DienstenCheques.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Gebruiker> Gebruikers { get; set; }
+        public DbSet<Onderneming> Ondernemingen { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -18,9 +17,10 @@ namespace DienstenCheques.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+            builder.ApplyConfiguration(new BestellingConfiguration());
+            builder.ApplyConfiguration(new DienstenChequeConfiguration());
+            builder.ApplyConfiguration(new PrestatieConfiguration());
+            builder.ApplyConfiguration(new GebruikerConfiguration());
         }
     }
 }
