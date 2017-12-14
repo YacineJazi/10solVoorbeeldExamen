@@ -4,9 +4,11 @@ using DienstenCheques.Models.Domain;
 using DienstenCheques.Models.ViewModels.BestellingenViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DienstenCheques.Controllers
 {
+    [Authorize(Policy = "Customer")]
     [ServiceFilter(typeof(GebruikerFilter))]
     public class BestellingenController : Controller
     {
