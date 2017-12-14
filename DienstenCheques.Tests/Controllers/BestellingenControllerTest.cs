@@ -24,7 +24,7 @@ namespace DienstenCheques.Tests.Controllers
             DummyApplicationDbContext context = new DummyApplicationDbContext();
             _mockGebruikersRepository = new Mock<IGebruikersRepository>();
             _jan = context.Jan;
-            // _controller = new BestellingenController(_mockGebruikersRepository.Object);
+            _controller = new BestellingenController(_mockGebruikersRepository.Object);
             _controller.TempData = new Mock<ITempDataDictionary>().Object;
             _model = new NieuwViewModel()
             {

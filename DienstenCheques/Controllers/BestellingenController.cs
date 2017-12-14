@@ -3,6 +3,7 @@ using DienstenCheques.Filters;
 using DienstenCheques.Models.Domain;
 using DienstenCheques.Models.ViewModels.BestellingenViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace DienstenCheques.Controllers
 {
@@ -18,7 +19,15 @@ namespace DienstenCheques.Controllers
 
         public ActionResult Index(Gebruiker gebruiker, int aantalMaanden = 6)
         {
-            throw new NotImplementedException();
+            IndexViewModel vm = new IndexViewModel()
+            {
+                Bestellingen = gebruiker.GetBestellingen(aantalMaanden)
+                                             .Select(b => new BestellingViewModel(b)),
+                AantalBeschikbareCheques = gebruiker.AantalBeschikbareElektronischeCheques,
+                AantalOpenstaandePrestatieUren = gebruiker.AantalOpenstaandePrestatieUren,
+                AantalMaanden = aantalMaanden
+            };
+            return View(vm);
         }
 
         public ActionResult Nieuw(Gebruiker gebruiker)
