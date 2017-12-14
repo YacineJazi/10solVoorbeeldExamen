@@ -39,7 +39,22 @@ namespace DienstenCheques.Controllers
         [HttpPost]
         public ActionResult Nieuw(Gebruiker gebruiker, NieuwViewModel model)
         {
-            throw new NotImplementedException();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Bestelling b = gebruiker.AddBestelling(model.AantalCheques, model.Elektronisch, model.DebiteerDatum);
+                    _gebruikersRepository.SaveChanges();
+                    TempData["message"] = $"Uw bestelling voor een totaalbedrag van {b.TotaalBedrag:N0} € werd gecreëerd";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            ViewData["ZichtWaarde"] = Bestelling.Bedragcheque;
+            return View(model);
         }
     }
 }
