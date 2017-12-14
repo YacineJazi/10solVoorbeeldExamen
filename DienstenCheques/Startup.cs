@@ -9,6 +9,7 @@ using DienstenCheques.Services;
 using DienstenCheques.Models.Domain;
 using DienstenCheques.Filters;
 using System.Security.Claims;
+using DienstenCheques.Data.Repositories;
 
 namespace DienstenCheques
 {
@@ -35,6 +36,7 @@ namespace DienstenCheques
             options.AddPolicy("Customer", policy => policy.RequireClaim(ClaimTypes.Role, "Customer")));
 
             services.AddScoped<GebruikerFilter>();
+            services.AddScoped<IGebruikersRepository, GebruikersRepository>();
             services.AddTransient<DienstenChequesInitializer>();
 
             // Add application services.
