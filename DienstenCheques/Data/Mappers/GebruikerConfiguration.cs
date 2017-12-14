@@ -9,7 +9,17 @@ namespace Beerhall.Data.Mappers
     {
         public void Configure(EntityTypeBuilder<Gebruiker> builder)
         {
-            throw new NotImplementedException();
+            // table & PK
+            builder.ToTable("Gebruiker");
+            builder.HasKey(t => t.GebruikersNummer);
+            // properties
+            builder.Property(t => t.Naam).IsRequired().HasMaxLength(100);
+            builder.Property(t => t.Voornaam).IsRequired().HasMaxLength(100);
+            builder.Property(t => t.Email).IsRequired().HasMaxLength(100);
+            // associations
+            builder.HasMany(t => t.Bestellingen).WithOne().IsRequired().OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(t => t.Prestaties).WithOne().IsRequired().OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(t => t.Portefeuille).WithOne().IsRequired().OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
