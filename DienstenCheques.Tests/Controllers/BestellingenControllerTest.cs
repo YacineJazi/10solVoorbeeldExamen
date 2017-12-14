@@ -110,16 +110,22 @@ namespace DienstenCheques.Tests.Controllers
             Assert.Equal(9M, (decimal)result?.ViewData["ZichtWaarde"]);
         }
 
-        [Fact(Skip = "Not yet implemented")]
+        [Fact]
         public void NieuwPost_Unsuccessful_DoesNotAddBestelling()
         {
-
+            _controller.Nieuw(_jan, _modelMetFout);
+            Assert.Equal(3, _jan.Bestellingen.Count);
+            _mockGebruikersRepository.Verify(m => m.SaveChanges(), Times.Never);
         }
 
-        [Fact(Skip = "Not yet implemented")]
+        [Fact]
         public void NieuwPos_Unsuccessful_PassesNieuwViewModelInViewResultModel()
         {
-
+            ViewResult result = _controller.Nieuw(_jan, _modelMetFout) as ViewResult;
+            NieuwViewModel nieuwViewModel = (NieuwViewModel)result?.Model;
+            Assert.Equal(70, nieuwViewModel?.AantalCheques);
+            Assert.Equal(DateTime.Today, nieuwViewModel?.DebiteerDatum);
+            Assert.Equal(true, nieuwViewModel?.Elektronisch);
         }
         #endregion
     }

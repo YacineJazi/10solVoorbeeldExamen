@@ -15,10 +15,10 @@ namespace DienstenCheques.Tests.Models
             Assert.Equal(DateTime.Today, b.CreatieDatum);
         }
 
-        [Fact(Skip="Not yet implemented")]
+        [Fact]
         public void NewBestelling_InvalidAantal_ThrowsException()
         {
-
+            Assert.Throws<ArgumentException>(() => new Bestelling(70, true, DateTime.Today));
         }
 
         [Fact]
