@@ -42,14 +42,12 @@ namespace DienstenCheques.Models.Domain
 
         private IEnumerable<DienstenCheque> GetBeschikbareElektronischeDienstenCheques()
         {
-            //Implementeer
-            return new List<DienstenCheque>();
+            return Portefeuille.Where(c => c.Elektronisch && c.Prestatie == null).OrderBy(c => c.CreatieDatum);
         }
 
         private int GetAantalBesteldeCheques(int jaar)
         {
-            //implementeer
-            return 0;
+            return Bestellingen.Where(b => b.CreatieDatum.Year == jaar).Sum(b => b.AantalAangekochteCheques);
         }
 
         public IEnumerable<Bestelling> GetBestellingen(int aantalMaanden)
@@ -59,14 +57,35 @@ namespace DienstenCheques.Models.Domain
 
         private void BetaalPrestatie(Prestatie p)
         {
-            //implementeer
+            IList<DienstenCheque> openstaandeCheques = GetBeschikbareElektronischeDienstenCheques().ToList();
+            if (openstaandeCheques.Count >= p.AantalUren)
+            {
+                for (int i = 0; i < p.AantalUren; i++)
+                {
+                    openstaandeCheques[i].Prestatie = p;
+                    openstaandeCheques[i].GebruiksDatum = DateTime.Today;
+                }
+                p.Betaald = true;
+            }
         }
 
         public Bestelling AddBestelling(int aantalCheques, bool elektronisch, DateTime debiteerDatum)
         {
-            //vervolledig implementatie
             Bestelling b = new Bestelling(aantalCheques, elektronisch, debiteerDatum);
+            if (GetAantalBesteldeCheques(b.CreatieDatum.Year) + aantalCheques > 500)
+                throw new ArgumentException("Je hebt de grens van 500 checques bereikt");
             Bestellingen.Add(b);
+            if (elektronisch)
+            {
+                for (int i = 0; i < aantalCheques; i++)
+                    Portefeuille.Add(new DienstenCheque(elektronisch));
+                IEnumerable<Prestatie> nietBetaaldePrestaties = GetOpenstaandePrestaties();
+                foreach (Prestatie p in nietBetaaldePrestaties)
+                {
+                    BetaalPrestatie(p);
+                    if (!p.Betaald) break;
+                }
+            }
             return b;
         }
 
